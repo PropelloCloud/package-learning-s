@@ -1,6 +1,6 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS\Commands;
+namespace Propello\PackageLearningS\Commands;
 
 use Illuminate\Console\Command;
 

@@ -1,6 +1,6 @@
 <?php
 
-// config for Sorayataraszka/PackageLearningS
+// config for Propello/PackageLearningS
 return [
 
 ];

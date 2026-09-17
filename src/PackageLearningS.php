@@ -1,5 +1,5 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS;
+namespace Propello\PackageLearningS;
 
 class PackageLearningS {}

@@ -1,10 +1,10 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS;
+namespace Propello\PackageLearningS;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Sorayataraszka\PackageLearningS\Commands\PackageLearningSCommand;
+use Propello\PackageLearningS\Commands\PackageLearningSCommand;
 
 class PackageLearningSServiceProvider extends PackageServiceProvider
 {

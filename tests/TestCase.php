@@ -1,10 +1,10 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS\Tests;
+namespace Propello\PackageLearningS\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Sorayataraszka\PackageLearningS\PackageLearningSServiceProvider;
+use Propello\PackageLearningS\PackageLearningSServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Sorayataraszka\\PackageLearningS\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Propello\\PackageLearningS\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

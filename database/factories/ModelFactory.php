@@ -1,6 +1,6 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS\Database\Factories;
+namespace Propello\PackageLearningS\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

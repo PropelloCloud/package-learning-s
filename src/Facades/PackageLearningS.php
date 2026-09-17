@@ -1,16 +1,16 @@
 <?php
 
-namespace Sorayataraszka\PackageLearningS\Facades;
+namespace Propello\PackageLearningS\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Sorayataraszka\PackageLearningS\PackageLearningS
+ * @see \Propello\PackageLearningS\PackageLearningS
  */
 class PackageLearningS extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Sorayataraszka\PackageLearningS\PackageLearningS::class;
+        return \Propello\PackageLearningS\PackageLearningS::class;
     }
 }
