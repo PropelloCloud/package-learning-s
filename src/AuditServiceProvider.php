@@ -2,24 +2,39 @@
 
 namespace Propello\PackageLearningS;
 
+use Propello\PackageLearningS\Listeners\ModelEventListener;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Propello\PackageLearningS\Commands\PackageLearningSCommand;
 
 class AuditServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('package-learning-s')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_package_learning_s_table')
-            ->hasCommand(PackageLearningSCommand::class);
+            ->hasConfigFile('multi-audit-log')
+            ->hasMigration('create_multi_audit_log_entries_table');
+    }
+
+    public function registeringPackage(): void
+    {
+        $this->app->singleton(AuditManager::class, function () {
+            return new AuditManager(config('multi-audit-log.groups', []));
+        });
+    }
+
+    public function bootingPackage(): void
+    {
+        $listener = $this->app->make(ModelEventListener::class);
+
+        foreach (config('multi-audit-log.groups', []) as $groupConfig) {
+            foreach ($groupConfig['models'] as $key => $value) {
+                $modelClass = is_int($key) ? $value : $key;
+
+                if (class_exists($modelClass)) {
+                    $modelClass::observe($listener);
+                }
+            }
+        }
     }
 }
