@@ -13,7 +13,6 @@ class AuditLogEntry extends Model
     protected $fillable = [
         'group_name',
         'group_id',
-        'auditable_type',
         'event',
         'old_values',
         'new_values',
