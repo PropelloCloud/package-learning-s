@@ -31,6 +31,11 @@ class AuditManager
         return null;
     }
 
+    private function filterAttributes(array $attributes, array $exclude): array
+    {
+        return array_diff_key($attributes, array_flip($exclude));
+    }
+
     public function record(Model $model, string $event): void
     {
         $modelClass = get_class($model);
@@ -40,15 +45,22 @@ class AuditManager
             return;
         }
 
+        $exclude = ['updated_at'];
+
         [$oldValues, $newValues] = match ($event) {
-            'created' => [null, $model->getAttributes()],
-            'updated' => [
-                array_intersect_key($model->getOriginal(), $model->getChanges()),
-                $model->getChanges(),
-            ],
-            'deleted' => [$model->getAttributes(), null],
+            'created' => [null, $this->filterAttributes($model->getAttributes(), $exclude)],
+            'updated' => (function () use ($model, $exclude) {
+                $changes = array_diff_key($model->getChanges(), array_flip($exclude));
+                $old = array_intersect_key($model->getRawOriginal(), $changes);
+                return [$old, $changes];
+            })(),
+            'deleted' => [$this->filterAttributes($model->getAttributes(), $exclude), null],
             default   => [null, null],
         };
+
+        if (empty($oldValues) && empty($newValues)) {
+            return;
+        }
 
         AuditLogEntry::create([
             'group_name' => $groupConfig['group_name'],
