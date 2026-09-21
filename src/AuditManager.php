@@ -2,4 +2,4 @@
 
 namespace Propello\PackageLearningS;
 
-class PackageLearningS {}
+class AuditManager {}

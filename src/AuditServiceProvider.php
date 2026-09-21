@@ -6,7 +6,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Propello\PackageLearningS\Commands\PackageLearningSCommand;
 
-class PackageLearningSServiceProvider extends PackageServiceProvider
+class AuditServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {

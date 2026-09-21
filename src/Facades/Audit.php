@@ -5,12 +5,12 @@ namespace Propello\PackageLearningS\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Propello\PackageLearningS\PackageLearningS
+ * @see \Propello\PackageLearningS\AuditManager
  */
-class PackageLearningS extends Facade
+class Audit extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Propello\PackageLearningS\PackageLearningS::class;
+        return \Propello\PackageLearningS\AuditManager::class;
     }
 }

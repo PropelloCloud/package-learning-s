@@ -4,7 +4,7 @@ namespace Propello\PackageLearningS\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Propello\PackageLearningS\PackageLearningSServiceProvider;
+use Propello\PackageLearningS\AuditServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -20,7 +20,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            PackageLearningSServiceProvider::class,
+            AuditServiceProvider::class,
         ];
     }
 

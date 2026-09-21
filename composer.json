@@ -62,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Propello\\PackageLearningS\\PackageLearningSServiceProvider"
+                "AuditServiceProvider"
             ],
             "aliases": {
-                "PackageLearningS": "Propello\\PackageLearningS\\Facades\\PackageLearningS"
+                "PackageLearningS": "Audit"
             }
         }
     },
