@@ -25,6 +25,7 @@ class AuditServiceProvider extends PackageServiceProvider
 
     public function bootingPackage(): void
     {
+        $manager  = $this->app->make(AuditManager::class);
         $listener = $this->app->make(ModelEventListener::class);
 
         foreach (config('multi-audit-log.groups', []) as $groupConfig) {
@@ -36,5 +37,9 @@ class AuditServiceProvider extends PackageServiceProvider
                 }
             }
         }
+
+        $this->app->terminating(function () use ($manager): void {
+            $manager->saveBufferedLog();
+        });
     }
 }

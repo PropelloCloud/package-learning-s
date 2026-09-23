@@ -7,7 +7,12 @@ use Propello\PackageLearningS\Models\AuditLogEntry;
 
 class AuditManager
 {
-    public function __construct(protected array $config) {}
+    private array $pending = [];
+
+    public function __construct(
+        private array $config,
+        private readonly ChangeDetector $detector = new ChangeDetector(),
+    ) {}
 
     public function resolveGroupConfig(string $modelClass): ?array
     {
@@ -31,11 +36,6 @@ class AuditManager
         return null;
     }
 
-    private function filterAttributes(array $attributes, array $exclude): array
-    {
-        return array_diff_key($attributes, array_flip($exclude));
-    }
-
     public function record(Model $model, string $event): void
     {
         $modelClass = get_class($model);
@@ -45,33 +45,44 @@ class AuditManager
             return;
         }
 
-        $exclude = ['updated_at'];
-
         [$oldValues, $newValues] = match ($event) {
-            'created' => [null, $this->filterAttributes($model->getAttributes(), $exclude)],
-            'updated' => (function () use ($model, $exclude) {
-                $changes = array_diff_key($model->getChanges(), array_flip($exclude));
-                $old = array_intersect_key($model->getRawOriginal(), $changes);
-                return [$old, $changes];
-            })(),
-            'deleted' => [$this->filterAttributes($model->getAttributes(), $exclude), null],
-            default   => [null, null],
+            'created' => [null, $this->detector->filterAttributes($model->getAttributes())],
+            'updated' => $this->detector->getUpdatedValues($model),
+            'deleted' => [$this->detector->filterAttributes($model->getAttributes()), null],
+            default => [null, null],
         };
 
         if (empty($oldValues) && empty($newValues)) {
             return;
         }
 
-        AuditLogEntry::create([
-            'group_name' => $groupConfig['group_name'],
-            'group_id' => $groupConfig['group_id_column']
-                ? $model->getAttribute($groupConfig['group_id_column'])
-                : null,
-            'auditable_type' => $modelClass,
-            'event' => $event,
-            'old_values' => $oldValues,
-            'new_values' => $newValues,
-            'user_id' => auth()->id(),
-        ]);
+        $groupId = $groupConfig['group_id_column']
+            ? (string) $model->getAttribute($groupConfig['group_id_column'])
+            : null;
+
+        $key = $groupConfig['group_name'] . ':' . ($groupId ?? '') . ':' . $event;
+
+        if (isset($this->pending[$key])) {
+            $this->pending[$key]['old_values'] = array_merge($this->pending[$key]['old_values'], $oldValues ?? []);
+            $this->pending[$key]['new_values'] = array_merge($this->pending[$key]['new_values'], $newValues ?? []);
+        } else {
+            $this->pending[$key] = [
+                'group_name' => $groupConfig['group_name'],
+                'group_id' => $groupId,
+                'event' => $event,
+                'old_values' => $oldValues ?? [],
+                'new_values' => $newValues ?? [],
+                'user_id' => auth()->id(),
+            ];
+        }
+    }
+
+    public function saveBufferedLog(): void
+    {
+        foreach ($this->pending as $entry) {
+            AuditLogEntry::create($entry);
+        }
+
+        $this->pending = [];
     }
 }
